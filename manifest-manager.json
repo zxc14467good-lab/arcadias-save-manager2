@@ -1,0 +1,40 @@
+{
+  "name": "아르카디아스 세이브 관리자",
+  "short_name": "아르카디아스",
+  "description": "GPTs와 함께하는 판타지 소설 게임 세이브 관리 앱",
+  "start_url": "./manager.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b0d12",
+  "theme_color": "#ffd76a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230b0d12' width='192' height='192'/><text x='96' y='130' font-size='120' font-weight='bold' fill='%23ffd76a' text-anchor='middle' font-family='Arial'>⚔️</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230b0d12' width='512' height='512'/><text x='256' y='380' font-size='300' font-weight='bold' fill='%23ffd76a' text-anchor='middle' font-family='Arial'>⚔️</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230b0d12' width='192' height='192' rx='45'/><text x='96' y='130' font-size='120' font-weight='bold' fill='%23ffd76a' text-anchor='middle' font-family='Arial'>⚔️</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%231a1a3a' width='540' height='720'/><text x='270' y='100' font-size='40' fill='%23ffd76a' text-anchor='middle'>⚔️ 아르카디아스</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}

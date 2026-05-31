@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="아르카디아스">
+<title>아르카디아스 자동 세이브 관리자</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230b0d12' width='180' height='180'/><text x='90' y='130' font-size='100' font-weight='bold' fill='%23ffd76a' text-anchor='middle' font-family='Arial'>⚔️</text></svg>">
+<style>
+:root{--bg:#0b0d12;--panel:#151923;--panel2:#202637;--text:#e9e9ef;--muted:#aab0c0;--line:#30384e;--gold:#ffd76a;--accent:#7c9cff;--ok:#74f0a7;--bad:#ff7c7c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#182033,#0b0d12);color:var(--text)}
+header{position:fixed;top:0;left:0;right:0;z-index:99;background:rgba(11,13,18,.98);border-bottom:1px solid var(--line);padding:12px;padding-top:max(12px,env(safe-area-inset-top));backdrop-filter:blur(10px)}
+.wrap,main{max-width:1050px;margin:0 auto}.wrap{padding:0 4px}
+main{position:fixed;top:0;left:0;right:0;bottom:0;padding:0;overflow-y:auto;overflow-x:hidden;padding-top:calc(70px + env(safe-area-inset-top));padding-bottom:env(safe-area-inset-bottom)}
+main>*{padding:12px}
+h1{font-size:18px;margin:0 0 4px;color:var(--gold)}.sub{font-size:12px;color:var(--muted)}
+.status{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--muted)}
+.badge{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0}
+.tabs button{border:1px solid var(--line);background:rgba(21,25,35,.5);color:var(--text);padding:8px;font-size:13px;border-radius:8px;cursor:pointer}
+.tabs button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+section{display:none;background:rgba(21,25,35,.94);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+section.active{display:block}h2{font-size:16px;margin:0 0 12px;color:var(--gold)}h3{font-size:13px;margin:12px 0 8px;color:var(--accent)}
+label{display:block;font-size:11px;color:var(--muted);margin:8px 0 4px;font-weight:600}
+input,textarea,select{width:100%;background:#0d1018;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 8px rgba(124,156,255,.2)}
+textarea{min-height:100px;resize:vertical;white-space:pre-wrap;font-family:monospace}
+button{border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);padding:9px 12px;font-size:13px;cursor:pointer;font-weight:500;-webkit-appearance:none;appearance:none}
+button:active{opacity:.8}
+button.primary{border:none;background:linear-gradient(135deg,#536dfe,#7c9cff);color:#fff;font-weight:700}
+button.ok{background:#123522;border-color:#2f7a4d;color:#d7ffe5}button.warn{background:#3a2b12;border-color:#846128;color:#ffe5b0}button.danger{background:#3a151d;border-color:#813144;color:#ffd8de}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}@media(min-width:600px){.grid.two{grid-template-columns:1fr 1fr}}
+.row,.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.row button,.quick button{flex:1 1 auto}.quick{display:grid;grid-template-columns:1fr 1fr;margin:0 0 12px;gap:8px}
+.card{background:#10141d;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}.card-title{font-weight:700;color:var(--gold);margin-bottom:4px;font-size:13px}.small{font-size:11px;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);border-left:3px solid var(--accent);background:rgba(124,156,255,.08);padding:8px;border-radius:6px;margin:8px 0}
+.warnbox{font-size:12px;color:#ffd7d7;border-left:3px solid var(--bad);background:rgba(255,124,124,.08);padding:8px;border-radius:6px;margin:8px 0}
+pre{white-space:pre-wrap;word-break:break-word;background:#080a10;border:1px solid var(--line);border-radius:10px;padding:10px;max-height:400px;overflow:auto;font-size:12px;font-family:monospace;line-height:1.4}
+@supports (padding: max(0px)) {
+  main { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>⚔️ 아르카디아스 세이브 관리자</h1>
+<div class="sub">GPTs와 복사·붙여넣기로 연동</div>
+<div class="status"><span class="badge" id="saveState">자동 저장 준비</span><span class="badge" id="lastSaved">준비 중</span></div>
+<div class="tabs">
+<button class="active" onclick="showTab('state')">상태</button><button onclick="showTab('records')">기록</button><button onclick="showTab('lists')">NPC/아이템</button><button onclick="showTab('output')">GPT용</button>
+</div>
+</div></header>
+
+<main>
+<div class="quick">
+<button class="primary" onclick="makeRestartPrompt(true)">재시작 텍스트 자동복사</button>
+<button class="ok" onclick="makeStopCommand(true)">!스탑 요청 자동복사</button>
+<button onclick="openChatGPT()">ChatGPT 열기</button>
+<button class="warn" onclick="exportJson()">JSON 백업</button>
+</div>
+
+<section id="state" class="active">
+<h2>1. 현재 세이브</h2>
+<div class="hint">입력하면 자동 저장됩니다. 플레이 종료 전 GPT에서 <b>!스탑</b>을 받아 기록 탭에 붙여넣는 게 핵심입니다.</div>
+<label>세이브 이름</label><input id="saveName" data-save value="아르카디아스 DAY01">
+<div class="grid two">
+<div><label>현재 위치</label><input id="location" data-save value="회색숲 외곽의 낡은 길가"></div>
+<div><label>시간대 / 날짜</label><input id="time" data-save value="아르카디아스 1일차"></div>
+<div><label>체력</label><input id="hp" data-save value="정상"></div>
+<div><label>위험도</label><select id="danger" data-save><option>낮음</option><option selected>보통</option><option>높음</option><option>매우 높음</option><option>치명적</option></select></div>
+<div><label>상태이상</label><input id="status" data-save value="없음"></div>
+<div><label>신분</label><input id="identity" data-save value="없음"></div>
+<div><label>소지금</label><input id="money" data-save value="없음"></div>
+<div><label>힘의 계통</label><input id="power" data-save value="미각성"></div>
+<div><label>전투력</label><input id="combat" data-save value="일반인"></div>
+</div>
+</section>
+
+<section id="records">
+<h2>2. 원문 로그 / 진행 기록</h2>
+<label>마지막 !스탑 원문</label><textarea id="lastStop" data-save placeholder="GPT가 출력한 !스탑 기록을 여기에 붙여넣기"></textarea>
+<label>최근 !장면저장 / 중요 대사</label><textarea id="sceneLog" data-save placeholder="중요 장면 원문, 대사, 선택지 등을 붙여넣기"></textarea>
+<label>진행 중 사건</label><textarea id="events" data-save placeholder="예: 그레이홀름 입구 도착, 경비병과 대치 중"></textarea>
+<label>미해결 떡밥</label><textarea id="mysteries" data-save placeholder="예: 회색숲 울음소리, 기록층 흔적, 오염 단검"></textarea>
+<label>플래그</label><textarea id="flags" data-save placeholder="예: MAGIC_OR_KI_AWAKENED = FALSE"></textarea>
+</section>
+
+<section id="lists">
+<h2>3. NPC / 아이템</h2>
+<h3>아이템 추가</h3>
+<div class="grid two"><div><label>아이템 이름</label><input id="itemName" placeholder="예: 스마트폰"></div><div><label>설명</label><input id="itemDesc" placeholder="예: 통신 없음"></div></div>
+<div class="row"><button class="ok" onclick="addItem()">아이템 추가</button><button onclick="loadDefaultItems()">초기 소지품 불러오기</button></div>
+<div id="items"></div>
+<h3>NPC 추가</h3>
+<div class="grid two"><div><label>이름 / 호칭</label><input id="npcName" placeholder="예: 로완 하르트"></div><div><label>역할</label><input id="npcRole" placeholder="예: 경비대장"></div><div><label>현재 태도</label><input id="npcAttitude" placeholder="예: 경계"></div><div><label>직업 / 주 무기 / 전투 스타일</label><input id="npcStyle" placeholder="예: 궁수 / 검사 / 미확정"></div></div>
+<label>NPC 메모</label><textarea id="npcMemo" placeholder="첫 등장, 관련 사건, 관계 변화 등"></textarea>
+<div class="row"><button class="ok" onclick="addNpc()">NPC 추가</button></div>
+<div id="npcs"></div>
+</section>
+
+<section id="output">
+<h2>4. GPTs 연동용 출력</h2>
+<div class="hint">버튼을 누르면 GPTs에 붙여넣을 텍스트가 생성됩니다.</div>
+<div class="row"><button class="primary" onclick="makeRestartPrompt(false)">재시작 텍스트 생성</button><button class="ok" onclick="makeStopCommand(false)">!스탑 요청 생성</button><button onclick="copyOutput()">결과 복사</button><button onclick="openChatGPT()">ChatGPT 열기</button></div>
+<pre id="out">여기에 GPT에 붙여넣을 텍스트가 표시됩니다.</pre>
+<h3>백업 / 복원</h3>
+<div class="row"><button class="warn" onclick="exportJson()">JSON 내보내기</button><button onclick="document.getElementById('importFile').click()">JSON 불러오기</button><button class="danger" onclick="clearSave()">저장 삭제</button></div>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
+<div class="warnbox">브라우저 데이터 삭제 시 저장이 사라질 수 있습니다. JSON 백업을 Google Drive에 보관하세요.</div>
+</section>
+</main>
+
+<script>
+const STORAGE_KEY="arcadias_hybrid_autosave_v1";
+let data={items:[],npcs:[]},timer=null;
+const fields=["saveName","location","time","hp","danger","status","identity","money","power","combat","lastStop","sceneLog","events","mysteries","flags"];
+function $(id){return document.getElementById(id)}
+function showTab(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+  $(id).classList.add("active");
+  event.target.classList.add("active");
+}
+function def(){return{saveName:"아르카디아스 DAY01",location:"회색숲 외곽의 낡은 길가",time:"아르카디아스 1일차",hp:"정상",danger:"보통",status:"없음",identity:"없음",money:"없음",power:"미각성",combat:"일반인",lastStop:"",sceneLog:"",events:"",mysteries:"",flags:"MAGIC_OR_KI_AWAKENED = FALSE",items:[{name:"스마트폰",desc:"통신 없음. 특수 기능 없음. 보조 AI와 별개."},{name:"지갑",desc:"현대 물건."},{name:"신분증",desc:"현대 한국 신분증. 현지에서 함부로 보여주면 의심 가능."},{name:"군번줄",desc:"현대 소지품."},{name:"손목시계",desc:"현대 물건."}],npcs:[]}}
+function collect(){fields.forEach(id=>data[id]=$(id).value);data.updatedAt=new Date().toISOString();data.items=data.items||[];data.npcs=data.npcs||[];return data}
+function apply(d){data=d||def();fields.forEach(id=>{if($(id)&&data[id]!==undefined)$(id).value=data[id]});data.items=Array.isArray(data.items)?data.items:[];data.npcs=Array.isArray(data.npcs)?data.npcs:[];renderItems();renderNpcs();updateHeader()}
+function updateHeader(){$"lastSaved").textContent=new Date().toLocaleTimeString()}
+function autosave(){clearTimeout(timer);$("saveState").textContent="자동 저장 중...";timer=setTimeout(()=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(collect(),null,2));$("saveState").textContent="자동 저장 완료";updateHeader()},300)}
+function load(){const raw=localStorage.getItem(STORAGE_KEY);if(raw){try{apply(JSON.parse(raw))}catch(e){apply(def())}}else{apply(def());autosave()}}
+function addItem(){const name=$("itemName").value.trim(),desc=$("itemDesc").value.trim();if(!name)return alert("아이템 이름을 입력하세요.");data.items.push({name,desc});$("itemName").value="";$("itemDesc").value="";renderItems();autosave()}
+function loadDefaultItems(){data.items=def().items;renderItems();autosave()}
+function removeItem(i){data.items.splice(i,1);renderItems();autosave()}
+function renderItems(){const box=$("items");box.innerHTML="";data.items.forEach((it,i)=>{box.innerHTML+=`<div class="card"><div class="card-title">${esc(it.name)}</div><div class="small">${esc(it.desc||"")}</div><div class="row"><button class="danger" onclick="removeItem(${i})">삭제</button></div></div>`})}
+function addNpc(){const name=$("npcName").value.trim();if(!name)return alert("NPC 이름/호칭을 입력하세요.");data.npcs.push({name,role:$("npcRole").value.trim(),attitude:$("npcAttitude").value.trim(),style:$("npcStyle").value.trim(),memo:$("npcMemo").value.trim()});["npcName","npcRole","npcAttitude","npcStyle","npcMemo"].forEach(id=>$(id).value="");renderNpcs();autosave()}
+function removeNpc(i){data.npcs.splice(i,1);renderNpcs();autosave()}
+function renderNpcs(){const box=$("npcs");box.innerHTML="";data.npcs.forEach((n,i)=>{box.innerHTML+=`<div class="card"><div class="card-title">${esc(n.name)}</div><div class="small">역할: ${esc(n.role||"미기록")}</div><div class="small">태도: ${esc(n.attitude||"미기록")}</div><div class="small">직업/전투 스타일: ${esc(n.style||"미확정")}</div><div style="margin-top:6px">${esc(n.memo||"")}</div><div class="row"><button class="danger" onclick="removeNpc(${i})">삭제</button></div></div>`})}
+function makeRestartPrompt(auto){collect();const items=data.items.map(i=>`- ${i.name}${i.desc?": "+i.desc:""}`).join("\n")||"- 없음";const npcs=data.npcs.map(n=>`- ${n.name}: ${n.role||"역할 미기록"} / 태도: ${n.attitude||"미기록"} / 직업·전투 스타일: ${n.style||"미확정"}${n.memo?" / 메모: "+n.memo:""}`).join("\n")||"- 없음";const text=`아르카디아스 이어서 진행.
+
+아래는 세이브 관리자 앱에서 생성한 최신 세이브다.
+이 기록을 기준으로 이어가줘.
+
+규칙:
+- 원문 로그가 있는 대사와 선택지는 그대로 유지한다.
+- 원문 로그가 없는 부분은 "원문 로그가 없어 세이브 기준으로 복원합니다."라고 표시한다.
+- 기존 세이브와 충돌하면 "기존 세이브와 충돌 가능성이 있습니다."라고 말하고 확인한다.
+- 현재 위치·체력·위험도는 먼저 표시한다.
+
+[현재 상태]
+세이브 이름: ${data.saveName||"미지정"}
+현재 위치: ${data.location||"미기록"}
+시간대: ${data.time||"미기록"}
+체력: ${data.hp||"미기록"}
+위험도: ${data.danger||"미기록"}
+상태이상: ${data.status||"미기록"}
+신분: ${data.identity||"미기록"}
+소지금: ${data.money||"미기록"}
+힘의 계통: ${data.power||"미기록"}
+전투력: ${data.combat||"미기록"}
+
+[소지품]
+${items}
+
+[NPC 인명록]
+${npcs}
+
+[진행 중 사건]
+${data.events||"없음"}
+
+[미해결 떡밥]
+${data.mysteries||"없음"}
+
+[플래그]
+${data.flags||"없음"}
+
+[마지막 !스탑 원문]
+${data.lastStop||"없음"}
+
+[최근 !장면저장 / 중요 대사]
+${data.sceneLog||"없음"}
+
+위 내용을 기준으로 현재 장면부터 이어가줘.`;$("out").textContent=text;showTab("output");if(auto)copyText(text);return text}
+function makeStopCommand(auto){const text=`!스탑
+현재 장면, 마지막 대사, 선택지, 현재 위치, 체력, 위험도, 상태이상, 소지품, 소지금, 인간관계, NPC 직업/전투 스타일, 진행 중 사건을 다음에 그대로 이어갈 수 있게 정리해줘.
+대사와 선택지는 원문 그대로 보존해줘.
+세이브 관리자 앱에 붙여넣기 쉽게 구역별로 정리해줘.`;$("out").textContent=text;showTab("output");if(auto)copyText(text);return text}
+function copyOutput(){copyText($("out").textContent)}
+async function copyText(text){try{await navigator.clipboard.writeText(text);alert("복사했습니다.")}catch(e){alert("자동 복사 실패. 출력칸을 직접 복사하세요.")}}
+function openChatGPT(){window.open("https://chatgpt.com/","_blank")}
+function exportJson(){collect();const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`arcadias_save_${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
+function importJson(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));autosave();alert("JSON 세이브를 불러왔습니다.")}catch(err){alert("JSON 파일을 읽을 수 없습니다.")}};r.readAsText(file,"utf-8")}
+function clearSave(){if(confirm("저장을 삭제할까요? JSON 백업이 없다면 복구할 수 없습니다.")){localStorage.removeItem(STORAGE_KEY);apply(def());autosave()}}
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"','&quot;').replaceAll("'","&#039;")}
+document.addEventListener("DOMContentLoaded",()=>{load();document.querySelectorAll("[data-save]").forEach(el=>{el.addEventListener("input",autosave);el.addEventListener("change",autosave)});if("serviceWorker" in navigator){navigator.serviceWorker.register("sw-manager.js").catch(e=>console.log("SW 등록 실패:",e))}});
+</script>
+</body>
+</html>

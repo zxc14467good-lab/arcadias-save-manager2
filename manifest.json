@@ -1,0 +1,19 @@
+{
+  "name": "아르카디아스 세이브 관리자",
+  "short_name": "아르카디아스",
+  "description": "아르카디아스 텍스트 RPG 세이브, NPC, 아이템, 원문 로그 관리 도구",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

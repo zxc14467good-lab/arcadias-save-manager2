@@ -1,591 +1,513 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>아르카디아스 세이브</title>
-  <style>
-    :root {
-      --bg: #0f1117;
-      --panel: #171a23;
-      --panel2: #202433;
-      --text: #e8e8ec;
-      --muted: #a8acb8;
-      --accent: #7c9cff;
-      --danger: #ff7c7c;
-      --ok: #7cffae;
-      --border: #30364a;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #0b0d12, var(--bg));
-      color: var(--text);
-      line-height: 1.5;
-    }
-    header {
-      padding: 18px 16px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(15, 17, 23, 0.95);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(8px);
-    }
-    h1 {
-      font-size: 20px;
-      margin: 0 0 4px;
-    }
-    .sub {
-      color: var(--muted);
-      font-size: 13px;
-    }
-    main {
-      padding: 14px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-    section {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
-    }
-    h2 {
-      font-size: 17px;
-      margin: 0 0 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-    }
-    label {
-      display: block;
-      color: var(--muted);
-      font-size: 13px;
-      margin: 8px 0 4px;
-    }
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #10131b;
-      color: var(--text);
-      padding: 10px;
-      font-size: 15px;
-      outline: none;
-    }
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-      white-space: pre-wrap;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 720px) {
-      .grid.two { grid-template-columns: 1fr 1fr; }
-      .grid.three { grid-template-columns: repeat(3, 1fr); }
-    }
-    button {
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    button.primary {
-      background: linear-gradient(135deg, #526fff, #7c9cff);
-      border: none;
-      color: white;
-      font-weight: 700;
-    }
-    button.danger {
-      background: #3a1c22;
-      color: #ffd0d0;
-      border-color: #6b2d39;
-    }
-    button.ok {
-      background: #173424;
-      color: #c7ffdc;
-      border-color: #2c6b44;
-    }
-    .row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .row button {
-      flex: 1 1 auto;
-    }
-    .small {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 6px;
-    }
-    .pill {
-      display: inline-block;
-      font-size: 12px;
-      color: #dce5ff;
-      background: rgba(124,156,255,.12);
-      border: 1px solid rgba(124,156,255,.28);
-      border-radius: 999px;
-      padding: 3px 8px;
-    }
-    .npc-card, .item-card {
-      background: #11141d;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    .npc-title, .item-title {
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .muted { color: var(--muted); }
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: #0b0d12;
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 12px;
-      max-height: 500px;
-      overflow: auto;
-    }
-    .warn {
-      border-left: 4px solid var(--danger);
-      padding-left: 10px;
-      color: #ffd1d1;
-      font-size: 13px;
-      margin: 8px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>아르카디아스 - 판타지 소설 게임</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
 
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f1117" />
-  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Noto Sans CJK KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a3a 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a3a 100%);
+        }
+
+        /* 헤더 */
+        .header {
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 3px solid #ffd700;
+            padding: 15px 15px 12px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 0.75em;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .save-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8em;
+        }
+
+        .save-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .save-indicator.saving {
+            background: #ff9800;
+            animation: pulse 0.6s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 15px;
+            gap: 12px;
+        }
+
+        /* 게임 화면 */
+        .game-screen {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .story-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+
+        .story-text {
+            line-height: 1.7;
+            font-size: 0.95em;
+            color: #e0e0e0;
+            text-align: justify;
+        }
+
+        .story-text p {
+            margin-bottom: 12px;
+            word-wrap: break-word;
+        }
+
+        /* 입력 영역 */
+        .input-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffd700;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.9em;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        #userInput::placeholder {
+            color: #666;
+        }
+
+        #userInput:focus {
+            outline: none;
+            border-color: #ffed4e;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .send-btn {
+            padding: 12px 16px;
+            background: #ffd700;
+            color: #1a1a3a;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 버튼 그룹 */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85em;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn.new-game {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .action-btn.load-game {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        /* 정보 패널 */
+        .info-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-height: 120px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .info-panel {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.8em;
+        }
+
+        .info-panel strong {
+            color: #ffd700;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.75em;
+            margin-bottom: 4px;
+        }
+
+        /* 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a3a 0%, #0f0f1e 100%);
+            border: 2px solid #ffd700;
+            border-radius: 16px 16px 0 0;
+            padding: 25px 20px 20px;
+            max-width: 100%;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #ffd700;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffd700;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #ffed4e;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-btn {
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95em;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            grid-column: 1 / 3;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(100, 100, 100, 0.5);
+            color: #e0e0e0;
+            border: 1px solid #666;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 저장본 리스트 */
+        .save-list {
+            margin-top: 15px;
+        }
+
+        .save-item {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .save-item:active {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: #ffd700;
+        }
+
+        .save-item-name {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
+
+        .save-item-info {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffed4e;
+        }
+
+        /* 안드로이드/iOS 최적화 */
+        input, button, textarea {
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-border-radius: 6px;
+            border-radius: 6px;
+        }
+
+        @supports (padding: max(0px)) {
+            .header {
+                padding-top: max(15px, env(safe-area-inset-top));
+            }
+            .app-container {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>아르카디아스 세이브 관리자 v1</h1>
-    <div class="sub">폰 브라우저용 · 로컬 저장 · GPT 붙여넣기용 세이브 생성</div>
-  </header>
-
-  <main>
-    <section>
-      <h2>0. 사용법 <span class="pill">필수</span></h2>
-      <div class="small">
-        플레이 중 GPT에서 <b>!스탑</b> 또는 <b>!세이브</b>가 나오면 이 앱에 복사해 저장하세요.
-        다음에 GPT에 붙여넣을 때는 아래의 “GPT 재시작 텍스트 생성” 버튼을 사용하면 됩니다.
-      </div>
-      <div class="warn">
-        이 파일은 서버에 저장하지 않습니다. 휴대폰 브라우저의 localStorage에 저장됩니다.
-        폰 초기화/브라우저 데이터 삭제 전에는 반드시 JSON 내보내기로 백업하세요.
-      </div>
-    </section>
-
-    <section>
-      <h2>1. 현재 상태</h2>
-      <div class="grid two">
-        <div>
-          <label>현재 위치</label>
-          <input id="location" value="회색숲 외곽의 낡은 길가" />
+    <div class="app-container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="header-title">⚔️ 아르카디아스</div>
+            <div class="header-subtitle">판타지 소설 게임 - 당신의 이야기를 만드세요</div>
+            <div class="save-status">
+                <span class="save-indicator" id="saveIndicator"></span>
+                <span id="saveStatus">준비 완료</span>
+            </div>
         </div>
-        <div>
-          <label>시간대 / 날짜</label>
-          <input id="time" value="아르카디아스 1일차" />
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <!-- 게임 화면 -->
+            <div class="game-screen">
+                <div class="story-container" id="storyContainer">
+                    <div class="story-text">
+                        <p style="color: #ffd700; text-align: center; margin-top: 40px; font-weight: bold;">📖 아르카디아스</p>
+                        <p style="text-align: center; margin-top: 30px; color: #aaa;">
+                            게임을 시작하려면 아래 버튼을 눌러주세요
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 버튼 그룹 -->
+                <div class="button-group" id="mainButtons">
+                    <button class="action-btn new-game" onclick="showNewGameModal()">새 게임 시작</button>
+                    <button class="action-btn load-game" onclick="showLoadGameModal()">게임 불러오기</button>
+                </div>
+
+                <!-- 입력 영역 -->
+                <div class="input-section" id="inputSection" style="display: none;">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="행동을 입력하세요..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <button class="send-btn" onclick="sendAction()">전송</button>
+                </div>
+            </div>
+
+            <!-- 정보 패널 -->
+            <div class="info-panels" id="infoPanels" style="display: none;">
+                <div class="info-panel">
+                    <div class="info-label">⏰ 진행</div>
+                    <div id="chapterInfo">-</div>
+                </div>
+                <div class="info-panel">
+                    <div class="info-label">💾 자동 저장</div>
+                    <div id="autoSaveInfo">준비 중</div>
+                </div>
+            </div>
         </div>
-        <div>
-          <label>체력</label>
-          <input id="hp" value="정상" />
+    </div>
+
+    <!-- 새 게임 시작 모달 -->
+    <div class="modal" id="newGameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>새 게임 시작</h2>
+            </div>
+            <p style="color: #aaa; font-size: 0.9em; margin-bottom: 15px;">
+                게임 저장본의 이름을 정해주세요. (선택사항)
+            </p>
+            <input 
+                type="text" 
+                id="gameName" 
+                class="modal-input" 
+                placeholder="예: 첫 번째 모험, 마법사의 여정..."
+                maxlength="30"
+            >
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" onclick="confirmNewGame()">시작하기</button>
+            </div>
+            <button class="modal-btn cancel" onclick="closeModal('newGameModal')">취소</button>
         </div>
-        <div>
-          <label>위험도</label>
-          <select id="danger">
-            <option>낮음</option>
-            <option selected>보통</option>
-            <option>높음</option>
-            <option>매우 높음</option>
-            <option>치명적</option>
-          </select>
+    </div>
+
+    <!-- 게임 불러오기 모달 -->
+    <div class="modal" id="loadGameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>게임 불러오기</h2>
+            </div>
+            <div class="save-list" id="saveListContainer"></div>
+            <button class="modal-btn cancel" onclick="closeModal('loadGameModal')" style="width: 100%; margin-top: 15px;">닫기</button>
         </div>
-        <div>
-          <label>상태이상</label>
-          <input id="status" value="없음" />
-        </div>
-        <div>
-          <label>신분</label>
-          <input id="identity" value="없음" />
-        </div>
-        <div>
-          <label>소지금</label>
-          <input id="money" value="없음" />
-        </div>
-        <div>
-          <label>힘의 계통</label>
-          <input id="power" value="미각성" />
-        </div>
-        <div>
-          <label>전투력</label>
-          <input id="combat" value="일반인" />
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <section>
-      <h2>2. 소지품 / 아이템</h2>
-      <div class="grid two">
-        <div>
-          <label>아이템 이름</label>
-          <input id="itemName" placeholder="예: 스마트폰" />
-        </div>
-        <div>
-          <label>설명</label>
-          <input id="itemDesc" placeholder="예: 통신 없음, 특수 기능 없음" />
-        </div>
-      </div>
-      <div class="row">
-        <button class="ok" onclick="addItem()">아이템 추가</button>
-        <button onclick="loadDefaultItems()">초기 소지품 불러오기</button>
-      </div>
-      <div id="items"></div>
-    </section>
-
-    <section>
-      <h2>3. NPC 인명록</h2>
-      <div class="grid two">
-        <div>
-          <label>이름 / 호칭</label>
-          <input id="npcName" placeholder="예: 로완 하르트 / 동문 경비병 A" />
-        </div>
-        <div>
-          <label>역할</label>
-          <input id="npcRole" placeholder="예: 그레이홀름 경비대장" />
-        </div>
-        <div>
-          <label>현재 태도</label>
-          <input id="npcAttitude" placeholder="예: 경계, 신중한 관찰" />
-        </div>
-        <div>
-          <label>직업 / 주 무기 / 전투 스타일</label>
-          <input id="npcStyle" placeholder="예: 궁수 / 검사 / 미확정" />
-        </div>
-      </div>
-      <label>메모</label>
-      <textarea id="npcMemo" placeholder="첫 등장, 관련 사건, 관계 변화 등"></textarea>
-      <div class="row">
-        <button class="ok" onclick="addNpc()">NPC 추가</button>
-      </div>
-      <div id="npcs"></div>
-    </section>
-
-    <section>
-      <h2>4. 마지막 !스탑 / 원문 로그</h2>
-      <label>마지막 !스탑 원문</label>
-      <textarea id="lastStop" placeholder="GPT가 출력한 !스탑 기록을 여기에 붙여넣기"></textarea>
-      <label>최근 장면저장 / 중요 대사</label>
-      <textarea id="sceneLog" placeholder="!장면저장, 중요 대사, 선택지 원문 등을 붙여넣기"></textarea>
-    </section>
-
-    <section>
-      <h2>5. 진행 중 사건 / 떡밥 / 플래그</h2>
-      <label>진행 중 사건</label>
-      <textarea id="events" placeholder="예: 회색숲의 울음소리, 그레이홀름 입성, 실종 채집꾼 등"></textarea>
-      <label>미해결 떡밥</label>
-      <textarea id="mysteries" placeholder="예: 회색숲의 울음소리 정체, 검은 이끼, 오염 단검 등"></textarea>
-      <label>플래그</label>
-      <textarea id="flags" placeholder="예: JOINED_GUILD = FALSE"></textarea>
-    </section>
-
-    <section>
-      <h2>6. 저장 / 불러오기</h2>
-      <div class="row">
-        <button class="primary" onclick="saveLocal()">휴대폰에 저장</button>
-        <button onclick="loadLocal()">휴대폰 저장 불러오기</button>
-        <button onclick="exportJson()">JSON 내보내기</button>
-        <button onclick="document.getElementById('importFile').click()">JSON 불러오기</button>
-      </div>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)" />
-      <div class="small" id="saveMsg"></div>
-    </section>
-
-    <section>
-      <h2>7. GPT 붙여넣기용 텍스트</h2>
-      <div class="row">
-        <button class="primary" onclick="generateRestartText()">GPT 재시작 텍스트 생성</button>
-        <button onclick="generateStopRequest()">!스탑 요청문 생성</button>
-        <button onclick="copyOutput()">결과 복사</button>
-      </div>
-      <pre id="output">여기에 생성 결과가 표시됩니다.</pre>
-    </section>
-  </main>
-
-  <script>
-    const state = {
-      items: [],
-      npcs: []
-    };
-
-    function $(id) { return document.getElementById(id); }
-
-    function getData() {
-      return {
-        location: $('location').value,
-        time: $('time').value,
-        hp: $('hp').value,
-        danger: $('danger').value,
-        status: $('status').value,
-        identity: $('identity').value,
-        money: $('money').value,
-        power: $('power').value,
-        combat: $('combat').value,
-        items: state.items,
-        npcs: state.npcs,
-        lastStop: $('lastStop').value,
-        sceneLog: $('sceneLog').value,
-        events: $('events').value,
-        mysteries: $('mysteries').value,
-        flags: $('flags').value,
-        savedAt: new Date().toISOString()
-      };
-    }
-
-    function setData(data) {
-      $('location').value = data.location || '';
-      $('time').value = data.time || '';
-      $('hp').value = data.hp || '';
-      $('danger').value = data.danger || '보통';
-      $('status').value = data.status || '';
-      $('identity').value = data.identity || '';
-      $('money').value = data.money || '';
-      $('power').value = data.power || '';
-      $('combat').value = data.combat || '';
-      state.items = Array.isArray(data.items) ? data.items : [];
-      state.npcs = Array.isArray(data.npcs) ? data.npcs : [];
-      $('lastStop').value = data.lastStop || '';
-      $('sceneLog').value = data.sceneLog || '';
-      $('events').value = data.events || '';
-      $('mysteries').value = data.mysteries || '';
-      $('flags').value = data.flags || '';
-      renderItems();
-      renderNpcs();
-    }
-
-    function addItem() {
-      const name = $('itemName').value.trim();
-      const desc = $('itemDesc').value.trim();
-      if (!name) return alert('아이템 이름을 입력하세요.');
-      state.items.push({ name, desc });
-      $('itemName').value = '';
-      $('itemDesc').value = '';
-      renderItems();
-    }
-
-    function loadDefaultItems() {
-      state.items = [
-        { name: '스마트폰', desc: '통신 없음. 특수 기능 없음. 보조 AI와 별개.' },
-        { name: '지갑', desc: '현대 물건.' },
-        { name: '신분증', desc: '현대 한국 신분증. 현지에서 함부로 보여주면 의심 가능.' },
-        { name: '군번줄', desc: '현대 소지품.' },
-        { name: '손목시계', desc: '현대 물건.' }
-      ];
-      renderItems();
-    }
-
-    function removeItem(i) {
-      state.items.splice(i, 1);
-      renderItems();
-    }
-
-    function renderItems() {
-      const box = $('items');
-      box.innerHTML = '';
-      state.items.forEach((it, i) => {
-        const div = document.createElement('div');
-        div.className = 'item-card';
-        div.innerHTML = `
-          <div class="item-title">${escapeHtml(it.name)}</div>
-          <div class="muted">${escapeHtml(it.desc || '')}</div>
-          <div class="row"><button class="danger" onclick="removeItem(${i})">삭제</button></div>
-        `;
-        box.appendChild(div);
-      });
-    }
-
-    function addNpc() {
-      const name = $('npcName').value.trim();
-      if (!name) return alert('NPC 이름/호칭을 입력하세요.');
-      state.npcs.push({
-        name,
-        role: $('npcRole').value.trim(),
-        attitude: $('npcAttitude').value.trim(),
-        style: $('npcStyle').value.trim(),
-        memo: $('npcMemo').value.trim()
-      });
-      $('npcName').value = '';
-      $('npcRole').value = '';
-      $('npcAttitude').value = '';
-      $('npcStyle').value = '';
-      $('npcMemo').value = '';
-      renderNpcs();
-    }
-
-    function removeNpc(i) {
-      state.npcs.splice(i, 1);
-      renderNpcs();
-    }
-
-    function renderNpcs() {
-      const box = $('npcs');
-      box.innerHTML = '';
-      state.npcs.forEach((n, i) => {
-        const div = document.createElement('div');
-        div.className = 'npc-card';
-        div.innerHTML = `
-          <div class="npc-title">${escapeHtml(n.name)}</div>
-          <div class="muted">역할: ${escapeHtml(n.role || '미기록')}</div>
-          <div class="muted">태도: ${escapeHtml(n.attitude || '미기록')}</div>
-          <div class="muted">직업/전투 스타일: ${escapeHtml(n.style || '미확정')}</div>
-          <div>${escapeHtml(n.memo || '')}</div>
-          <div class="row"><button class="danger" onclick="removeNpc(${i})">삭제</button></div>
-        `;
-        box.appendChild(div);
-      });
-    }
-
-    function saveLocal() {
-      localStorage.setItem('arcadias_save_v1', JSON.stringify(getData(), null, 2));
-      $('saveMsg').textContent = '휴대폰 브라우저에 저장했습니다. ' + new Date().toLocaleString();
-    }
-
-    function loadLocal() {
-      const raw = localStorage.getItem('arcadias_save_v1');
-      if (!raw) return alert('저장된 데이터가 없습니다.');
-      setData(JSON.parse(raw));
-      $('saveMsg').textContent = '저장 데이터를 불러왔습니다.';
-    }
-
-    function exportJson() {
-      const data = JSON.stringify(getData(), null, 2);
-      const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
-      const a = document.createElement('a');
-      const date = new Date().toISOString().slice(0,10);
-      a.href = URL.createObjectURL(blob);
-      a.download = `arcadias_save_${date}.json`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function importJson(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          setData(JSON.parse(reader.result));
-          alert('JSON 세이브를 불러왔습니다.');
-        } catch (e) {
-          alert('JSON 파일을 읽을 수 없습니다.');
-        }
-      };
-      reader.readAsText(file, 'utf-8');
-    }
-
-    function generateRestartText() {
-      const d = getData();
-      const items = d.items.map(i => `- ${i.name}${i.desc ? ': ' + i.desc : ''}`).join('\n') || '- 없음';
-      const npcs = d.npcs.map(n => `- ${n.name}: ${n.role || '역할 미기록'} / 태도: ${n.attitude || '미기록'} / 전투 스타일: ${n.style || '미확정'}${n.memo ? ' / 메모: ' + n.memo : ''}`).join('\n') || '- 없음';
-
-      const text = `아르카디아스 이어서 진행.
-
-아래는 최신 세이브 기록이다.
-원문 로그가 있는 대사와 선택지는 그대로 유지하고, 원문 로그가 없는 부분은 “원문 로그가 없어 세이브 기준으로 복원합니다.”라고 표시해줘.
-
-[현재 상태]
-현재 위치: ${d.location}
-시간대: ${d.time}
-체력: ${d.hp}
-위험도: ${d.danger}
-상태이상: ${d.status}
-신분: ${d.identity}
-소지금: ${d.money}
-힘의 계통: ${d.power}
-전투력: ${d.combat}
-
-[소지품]
-${items}
-
-[NPC 인명록]
-${npcs}
-
-[진행 중 사건]
-${d.events || '없음'}
-
-[미해결 떡밥]
-${d.mysteries || '없음'}
-
-[플래그]
-${d.flags || '없음'}
-
-[마지막 !스탑 원문]
-${d.lastStop || '없음'}
-
-[최근 장면저장 / 중요 대사]
-${d.sceneLog || '없음'}
-
-위 기록을 기준으로 현재 위치·체력·위험도를 먼저 표시하고, 마지막 장면부터 이어가줘.`;
-
-      $('output').textContent = text;
-    }
-
-    function generateStopRequest() {
-      const text = `!스탑
-현재 장면, 마지막 대사, 선택지, 현재 위치, 체력, 위험도, 상태이상, 소지품, 소지금, 인간관계, 진행 중 사건을 다음에 그대로 이어갈 수 있게 정리해줘.
-대사와 선택지는 원문 그대로 보존해줘.
-NPC 직업, 주 무기, 전투 스타일, 감정선 변화도 있으면 함께 기록해줘.`;
-      $('output').textContent = text;
-    }
-
-    async function copyOutput() {
-      const text = $('output').textContent;
-      try {
-        await navigator.clipboard.writeText(text);
-        alert('복사했습니다.');
-      } catch (e) {
-        alert('복사 실패. 내용을 직접 길게 눌러 복사하세요.');
-      }
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    loadDefaultItems();
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-      });
-    }
-  </script>
-
+    <script src="game-state.js"></script>
+    <script src="gpts-helper.js"></script>
 </body>
 </html>
